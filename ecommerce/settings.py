@@ -30,7 +30,7 @@ SECRET_KEY = 'r148v)0a&0p6!h0xbwpnrk2+3u$k87#ypd%f&sqxa%pc=v^yic'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vedecommerce1.herokuapp.com', 'http://127.0.0.1:8000/']
 
 # Cart App
 
