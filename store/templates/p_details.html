@@ -1,0 +1,123 @@
+{% extends 'header.html' %}
+
+{% block content %}
+<style>
+    body{
+        background-color: #e8e8e8;
+    }
+</style>
+</br>
+
+<h3 style="text-align: center;">{{products.title}}</h3>
+
+<!-- Showing ALert MEssage while adding to Cart -->
+
+ <div class="alert alert-primary" role="alert" v-if="showMessage">
+  Product added to cart
+</div>
+
+
+<!-- end of alrt Message -->
+<hr>
+</br>
+<div class="container" id="productApp">
+  <div class="row">
+    <div class="col-6"><img src="{{products.img.url}}" height="520px" width="500px" style="border: 1px solid #fff; border-radius: 10px;"></div>
+    <div class="col-6">
+        <h3>Details</h3>
+        <h4>{{products.title}}</h4>
+       
+        <legend>{{products.price}} || Tk</legend>
+        <h5>Select UOM Model</h5>
+       
+            {% for v in products.variants.all %}
+
+            <UOM>
+            {% if products.variants.all %}
+
+                <button @click="addToCart({{v.id}})" class="btn btn-success">{{v.title}}</button>
+            {% else %}
+            <p class="btn btn-info">No Varients are Available for this Product</p>
+            
+            {% endif %}
+            {% endfor %}
+        </br>
+        
+        {% for u in products.ums.all %}
+            {% if products.ums.all %}
+            
+            <p>Select UOM Model</p>
+                <button @click="addToCart({{u.id}})" class="btn btn-outline-primary">{{u.title}}</button>
+            {% else %}
+            <p>No UOM Available for this product</p>
+            {% endif %}
+        {% endfor %}
+        </select>
+        </br>
+       
+        </br>
+         <button @click="addToCart({{products.id}})" class="btn btn-warning col-12">Add to cart</button> 
+
+
+        <p>{{products.description|safe}}</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+
+<script type="text/javascript">
+     var productApp = new Vue({
+        el: '#productApp',
+        delimiters: ['[[', ']]'],
+
+        data(){
+            return {
+                showMessage: false,
+            }
+        },
+
+        mounted(){
+            console.log("Mounted")
+        },
+        methods: {
+            addToCart(product_id){
+                console.log("product_id:", product_id);
+
+                var data = {'product_id': product_id, 'update': false, 'quantity': 1};
+
+                fetch('/api/api_add_to_cart/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    
+                    console.log(response);
+                    this.showMessage = true
+                    setTimeout(() => {
+                        this.showMessage = false
+                    }, 2000)
+                })
+              
+                .catch(function (error) {
+                    console.log("Error 2");
+                    console.log(error)
+                })
+            },
+        },
+    });
+
+</script>
+
+
+{% endblock %}

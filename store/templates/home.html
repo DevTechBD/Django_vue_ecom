@@ -1,0 +1,307 @@
+
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"
+    integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A=="
+    crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"
+    integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw=="
+    crossorigin="anonymous" />
+<script>
+$('.cat-slider').slick({
+    dots: true,
+    infinite: false,
+    speed: 300,
+    slidesToShow: 8,
+    slidesToScroll: 4,
+    dots: false,
+    responsive: [
+        {
+            breakpoint: 1025,
+            settings: {
+                slidesToShow: 6,
+                slidesToScroll: 3,
+            }
+        },
+        {
+            breakpoint: 992,
+            settings: {
+                slidesToShow: 5,
+                slidesToScroll: 3,
+            }
+        },
+        {
+            breakpoint: 769,
+            settings: {
+                slidesToShow: 4,
+                slidesToScroll: 4,
+            }
+        },
+        {
+            breakpoint: 577,
+            settings: {
+                slidesToShow: 3,
+                slidesToScroll: 3
+            }
+        },
+        {
+            breakpoint: 351,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+            }
+        }
+    ]
+});
+
+
+$('.product-slider').slick({
+    dots: true,
+    infinite: false,
+    speed: 300,
+    slidesToShow: 4,
+    slidesToScroll: 4,
+    dots: false,
+    responsive: [
+        {
+            breakpoint: 992,
+            settings: {
+                slidesToShow: 3,
+                slidesToScroll: 3
+            }
+        },
+        {
+            breakpoint: 768,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+            }
+        },
+        {
+            breakpoint: 500,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }
+    ]
+});
+
+</script>
+</br>
+{% comment %} <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" style="border: 1px solid #fff; border-radius: 10px;">
+  <div class="carousel-inner">
+   {% for s in sliders %}
+    <div class="carousel-item active">
+    
+      <img class="d-block w-100" src="{{ s.img.url }}" alt="First slide" height="500px">
+    
+    
+    </div>
+  
+    {% endfor %}
+  </div>
+</div> {% endcomment %}
+ <style>
+*{
+    
+}
+.cat {
+    margin-bottom: 30px;
+}
+
+.cat-row {
+    display: grid;
+    grid-template-columns: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
+}
+
+.cat-cards {
+    width: 100%;
+    border: 1px solid #DFDFDF;
+}
+
+.cat-images img {
+    padding: 10px;
+    max-width: 100%;
+    height: 85px;
+    display: block;
+    margin: auto;
+    object-fit: contain;
+}
+
+.cat-title {
+    word-wrap: break-word;
+}
+
+.slick-next:focus, .slick-next:hover, .slick-prev:focus, .slick-prev:hover, .slick-arrow.slick-next, .slick-arrow.slick-prev {
+    z-index: 1!important;
+}
+
+.slick-prev:before {
+    color: #C82333!important;
+    font-size: 30px!important;
+  }
+  .slick-next:before {
+    color: #C82333!important;
+    font-size: 30px!important;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+</br>
+<div class="container">
+<div class="row">
+  <div class="col-6">
+      {% for s in sliders %}
+        <img src="{{s.img.url}}"height="250px" width="100%">
+      {% endfor %}
+    </div>
+     <div class="col-6">
+      {% for s in sliders %}
+        <img src="{{s.img.url}}"height="250px" width="100%">
+      {% endfor %}
+    </div>
+   
+</div>
+ 
+</div>
+
+
+
+
+
+<div class="container home-container">
+    <div class="card">
+        <!-- Categories -->
+        <h4 class="text-uppercase mt-4 p-2 cat">Categories</h4>
+    </div>
+    <div class="cat-row cat-slider">
+        {% for p in cats %}
+        <div class="cat-cards bg-white">
+            <div class="cat-images">
+                <img src="{{ p.img.url }}" alt="">
+            </div>
+            <div class="titles">
+                <p class="text-center font-weight-bold cat-title text-wrap">{{ p.title }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</br>
+</br>
+
+
+<style>
+    .bg{
+
+    }
+</style>
+<h2 class="text-center bg" style="text-align: center;">All Products</h2>
+
+<div id="productApp">
+
+<div class="row">
+{% for p in products %}
+<div class="card m-4" style="width: 18rem;">
+<a href="{% url 'product_details' p.id %}">
+  <img class="card-img-top bg-image hover-zoom" src="{{p.img.url}}" height="150px" width="240px">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">{{p.title}}</h5>
+    {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+    <a href="{% url 'product_details' p.id %}" class="btn btn-dark">View Details</a>
+    <button @click="addToCart({{p.id}})" class="btn btn-danger">Add to cart</button> 
+  </div>
+</div>
+{% endfor %}
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+
+
+
+
+
+<script>
+    var productApp = new Vue({
+        el: '#productApp',
+        delimiters: ['[[', ']]'],
+
+        data(){
+            return {
+
+            }
+        },
+
+        mounted(){
+            console.log("Mounted")
+        },
+        methods: {
+            addToCart(product_id){
+                console.log("product_id:", product_id);
+
+                var data = {'product_id': product_id, 'update': false, 'quantity': 1};
+
+                fetch('/api/api_add_to_cart/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response);
+                })
+              
+                .catch(function (error) {
+                    console.log("Error 2");
+                    console.log(error)
+                })
+            },
+        },
+    });
+
+</script>
+
+
+
+
+
+{% endblock %}
+

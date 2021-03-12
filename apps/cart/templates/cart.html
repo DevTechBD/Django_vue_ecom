@@ -1,0 +1,309 @@
+{% extends 'header.html' %}
+
+{% block content %}
+{% load static %}
+<style>
+
+.cont{
+height: 36px;
+width: 80px;
+background: #c3232a;
+border: none;
+border-radius: 7px;
+color: #fff;
+
+}
+</style>
+
+
+
+
+
+<script src="{% static 'js/cart.js' %}"></script>
+
+<div id="productApp">
+{% if cart %}
+<div class="col-lg-12">
+<table class="table m-5 container-fluid">
+    <tr>
+        <th>Product Name</th>
+        <th>Qty</th>
+        <th>Price</th>
+    </tr>
+
+    <tr v-for="product in products">
+        
+        <td>[[product.title]]</td>
+        <td>
+         <button @click="minusButton(product.id, product.quantity)" class="badge bg-danger">-</button>
+        [[product.quantity]]
+        <button @click="plusButton(product.id, product.quantity)" class="badge bg-success">+</button>
+        </td>
+        <td>[[product.total_price]] $</td>
+        <td><button @click="removeProduct(product.id)" class="btn bg-danger">Remove</button></td>
+    </tr>
+</table>
+</div>
+<h4 style="text-align: center;">Checkout Form</h4>
+<hr style="color: #c3232a">
+
+{% comment %} Form Start Here {% endcomment %}
+
+<form class="form-inline m-5" v-on:submit.prevent="submitForm()">
+<div class="mb-2">
+    <label class="form-label">First Name</label>
+    <input type="text" class="form-control col-4"  name="first_name" v-model="first_name">
+   
+  </div>
+  <div class="mb-2">
+    <label class="form-label">Last Name</label>
+    <input type="text" class="form-control"  name="last_name"v-model="last_name">
+   
+  </div>
+<div class="mb-2">
+    <label for="exampleInputEmail1" class="form-label">Email address</label>
+    <input type="email" class="form-control"  aria-describedby="emailHelp" name="email" v-model="email">
+   
+  </div>
+ 
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Address</label>
+    <textarea type="text" class="form-control" id="exampleInputPassword1" name="address" v-model="address"></textarea>
+  </div>
+  <div class="mb-2">
+    <label class="form-label">ZipCode</label>
+    <input type="text" class="form-control"  name="zipcode" v-model="zipcode">
+   
+  </div>
+  <div class="mb-2">
+    <label class="form-label">Place</label>
+    <input type="text" class="form-control"   name="place" v-model="place">
+   
+  </div>
+  {% comment %} <div class="mb-3 form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+    <label class="form-check-label" for="exampleCheck1">Remember Address</label>
+  </div> {% endcomment %}
+  
+  <button type="submit" class="btn btn-success col-12">Submit</button>
+
+</form>
+<div class="container card col-lg-12">
+<button class="btn btn-warning" @click="buy()">Pay With Stripe</button>
+</div>
+
+{% else %}
+<h2 style="text-align: center;">oh No! Cart is Empty</h2>
+{% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+
+<script type="application/javascript" src="https://js.stripe.com/v3/"></script>
+<script>
+    var productApp = new Vue({
+        el: "#productApp",
+        delimiters: ["[[", "]]"],
+
+        data() {
+            return {
+                first_name: '',
+                last_name: '',
+                email: '',
+                address: '',
+                zipcode: '',
+                place: '',
+                products: [{{ productString|safe }}]
+            }
+        },
+
+        mounted() {
+            console.log("Mounted");
+            console.log(this.products);
+        },
+        methods: {
+            // Api Checkout Stripe
+
+            buy(){
+                var stripe = Stripe('{{pub_key}}');
+
+
+                fetch('/api/stripe_checkout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                     credentials: 'same-origin',
+                })
+                .then(function(response) {
+                    return response.json()
+                })
+                .then(function(session) {
+                    return stripe.redirectToCheckout({sessionId: session.session.id})
+                })
+                .then(function(result) {
+                    if(result.error){
+                        console.log(result.error.message);
+                    }
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+            },
+
+
+            // Submit Form For Checkout //
+
+            submitForm() {
+                // names for form submission //
+                var data = {
+                    'first_name': this.first_name,
+                    'last_name': this.last_name,
+                    'email': this.email,
+                    'address': this.address,
+                    'zipcode': this.address,
+                    'place': this.place
+                };
+                
+                fetch('/api/api_checkout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log("Success");
+                    console.log(response);
+
+                    window.location.href = '/';
+                })
+              
+                .catch(function (error) {
+                    console.log("Error 2");
+                    console.log(error)
+                })
+            },
+
+            // Minus Button
+            minusButton(product_id, quantity){
+                console.log('product_id:', product_id);
+                var data = {
+                    'product_id': product_id,
+                    'update': true,
+                    'quantity': parseInt(quantity) - 1,
+                };
+
+                fetch('/api/api_add_to_cart/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response);
+
+                    for(var i = 0; i < this.products.length; i++){
+                        var product = this.products[i]
+
+                        if(product.id === product_id){
+                            this.products[i].quantity = parseInt(this.products[i].quantity) - 1
+                            this.products[i].total_price = parseInt(this.products[i].quantity) * parseInt(this.products[i].price)
+                        }
+                    }
+                })
+              
+                .catch(function (error) {
+                    console.log("Error 2");
+                    console.log(error)
+                })
+            },
+            
+
+            // Plus quantity
+
+            plusButton(product_id, quantity){
+                console.log('product_id:', product_id);
+                var data = {
+                    'product_id': product_id,
+                    'update': true,
+                    'quantity': parseInt(quantity) + 1,
+                };
+
+                fetch('/api/api_add_to_cart/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log(response);
+
+                    for(var i = 0; i < this.products.length; i++){
+                        var product = this.products[i]
+
+                        if(product.id === product_id){
+                            this.products[i].quantity = parseInt(this.products[i].quantity) + 1
+                            this.products[i].total_price = parseInt(this.products[i].quantity) * parseInt(this.products[i].price)
+                        }
+                    }
+                })
+              
+                .catch(function (error) {
+                    console.log("Error 2");
+                    console.log(error)
+                })
+            },
+
+            // Remove products
+
+            
+
+
+            removeProduct(product_id) {
+                
+                console.log(product_id)
+                 var data = {'product_id': product_id};
+
+                 fetch('/api/api_remove_from_cart/', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'X-CSRFToken': '{{ csrf_token }}',
+                     },
+                     credentials: 'same-origin',
+                     body: JSON.stringify(data)
+                 })
+                 .then((response) => {
+                     console.log(response)
+                     this.products = this.products.filter(product => product.id !== product_id)
+                 })
+                 .catch(function (error) {
+                     console.log(error)
+                 })
+
+            }
+        }
+    })
+
+
+</script>
+
+
+
+
+
+
+
+{% endblock %}
