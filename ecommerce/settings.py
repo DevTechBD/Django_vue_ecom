@@ -28,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'r148v)0a&0p6!h0xbwpnrk2+3u$k87#ypd%f&sqxa%pc=v^yic'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['vedecommerce1.herokuapp.com', 'http://127.0.0.1:8000/']
+ALLOWED_HOSTS = ['vedecommerce1.herokuapp.com', '127.0.0.1:8000']
 
 # Cart App
 
